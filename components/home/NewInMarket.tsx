@@ -28,6 +28,7 @@ export function NewInMarket({ properties, currentPage, totalPages }: NewInMarket
           <PropertyCard 
             key={property.id} 
             property={property} 
+            currentPage={currentPage}
             className={idx === properties.length - 1 ? "hidden lg:flex" : idx === properties.length - 2 ? "hidden xl:flex" : ""}
           />
         ))}

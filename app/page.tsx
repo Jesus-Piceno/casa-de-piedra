@@ -12,13 +12,14 @@ export interface Property {
   price: number;
   status: string;
   type: string;
-  imageUrl: string;
+  images: string[];
   beds: number;
   baths: number;
   area: number;
   isFeatured?: boolean;
   isNewArrival?: boolean;
   isExclusive?: boolean;
+  slug: string;
 }
 
 export default async function Home(props: { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> }) {
@@ -51,13 +52,14 @@ export default async function Home(props: { searchParams?: Promise<{ [key: strin
     price: p.price,
     status: p.status,
     type: p.type,
-    imageUrl: p.image_url,
+    images: p.gallery_images || [],
     beds: p.beds,
     baths: p.baths,
     area: p.area,
     isFeatured: p.is_featured,
     isNewArrival: p.is_new_arrival,
     isExclusive: p.is_exclusive,
+    slug: p.slug,
   });
 
   const featuredProperties = (featuredData || []).map(mapProperty);
