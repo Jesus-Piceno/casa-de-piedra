@@ -1,11 +1,14 @@
 import { PropertyCard } from "@/components/ui/PropertyCard";
-import { Property } from "@/data/mockProperties";
+import { Property } from "@/app/page";
+import { Pagination } from "@/components/ui/Pagination";
 
 interface NewInMarketProps {
   properties: Property[];
+  currentPage: number;
+  totalPages: number;
 }
 
-export function NewInMarket({ properties }: NewInMarketProps) {
+export function NewInMarket({ properties, currentPage, totalPages }: NewInMarketProps) {
   return (
     <section>
       <div className="flex items-end justify-between mb-8">
@@ -30,11 +33,7 @@ export function NewInMarket({ properties }: NewInMarketProps) {
         ))}
       </div>
       
-      <div className="mt-12 text-center">
-        <button className="px-8 py-3 bg-white border border-nordic-dark/10 hover:border-mosque hover:text-mosque text-nordic-dark font-medium rounded-lg transition-all hover:shadow-md">
-          Load more properties
-        </button>
-      </div>
+      <Pagination currentPage={currentPage} totalPages={totalPages} />
     </section>
   );
 }

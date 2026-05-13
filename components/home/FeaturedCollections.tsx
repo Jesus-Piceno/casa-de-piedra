@@ -1,5 +1,5 @@
 import { FeaturedPropertyCard } from "@/components/ui/FeaturedPropertyCard";
-import { Property } from "@/data/mockProperties";
+import { Property } from "@/app/page";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 

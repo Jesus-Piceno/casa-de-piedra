@@ -202,7 +202,7 @@ export const mockProperties: Property[] = [
     price: 5400000,
     status: 'FOR SALE',
     type: 'House',
-    imageUrl: 'https://images.unsplash.com/photo-1605276374104-a628b0c03788?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80',
     beds: 5,
     baths: 4,
     area: 320,

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { MapPin, BedDouble, Bath, Square, Heart } from "lucide-react";
-import { Property } from "@/data/mockProperties";
+import { Property } from "@/app/page";
 
 interface FeaturedPropertyCardProps {
   property: Property;
