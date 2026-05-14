@@ -1,6 +1,43 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Search, SlidersHorizontal } from "lucide-react";
+import { FiltersModal } from "./FiltersModal";
+
+const PROPERTY_TYPES = ["All", "House", "Apartment", "Villa", "Penthouse", "Studio"];
 
 export function HeroSection() {
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const activeType = searchParams.get("type") || "All";
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
+
+  const handleSearch = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (searchQuery.trim()) {
+      params.set("q", searchQuery.trim());
+    } else {
+      params.delete("q");
+    }
+    // Reset to page 1 on new search
+    params.delete("page");
+    router.push(`/?${params.toString()}`);
+  };
+
+  const handleTypeClick = (type: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (type === "All") {
+      params.delete("type");
+    } else {
+      params.set("type", type);
+    }
+    // Reset to page 1 when changing type
+    params.delete("page");
+    router.push(`/?${params.toString()}`);
+  };
+
   return (
     <section className="py-12 md:py-16">
       <div className="max-w-3xl mx-auto text-center space-y-8">
@@ -19,27 +56,46 @@ export function HeroSection() {
             className="block w-full pl-12 pr-4 py-4 rounded-xl border-none bg-white text-nordic-dark shadow-soft placeholder-nordic-muted/60 focus:ring-2 focus:ring-mosque focus:bg-white transition-all text-lg outline-none" 
             placeholder="Search by city, neighborhood, or address..." 
             type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter") handleSearch(); }}
           />
-          <button className="absolute inset-y-2 right-2 px-6 bg-mosque hover:bg-mosque/90 text-white font-medium rounded-lg transition-colors flex items-center justify-center shadow-lg shadow-mosque/20">
+          <button
+            onClick={handleSearch}
+            className="absolute inset-y-2 right-2 px-6 bg-mosque hover:bg-mosque/90 text-white font-medium rounded-lg transition-colors flex items-center justify-center shadow-lg shadow-mosque/20"
+          >
             Search
           </button>
         </div>
         
         <div className="flex items-center justify-center gap-3 overflow-x-auto hide-scroll py-2 px-4 -mx-4">
-          <button className="whitespace-nowrap px-5 py-2 rounded-full bg-nordic-dark text-white text-sm font-medium shadow-lg shadow-nordic-dark/10 transition-transform hover:-translate-y-0.5">
-            All
-          </button>
-          {['House', 'Apartment', 'Villa', 'Penthouse'].map(type => (
-            <button key={type} className="whitespace-nowrap px-5 py-2 rounded-full bg-white border border-nordic-dark/5 text-nordic-muted hover:text-nordic-dark hover:border-mosque/50 text-sm font-medium transition-all hover:bg-mosque/5">
+          {PROPERTY_TYPES.map((type) => (
+            <button
+              key={type}
+              onClick={() => handleTypeClick(type)}
+              className={`whitespace-nowrap px-5 py-2 rounded-full text-sm font-medium transition-all ${
+                activeType === type
+                  ? "bg-nordic-dark text-white shadow-lg shadow-nordic-dark/10"
+                  : "bg-white border border-nordic-dark/5 text-nordic-muted hover:text-nordic-dark hover:border-mosque/50 hover:bg-mosque/5"
+              }`}
+            >
               {type}
             </button>
           ))}
           <div className="w-px h-6 bg-nordic-dark/10 mx-2"></div>
-          <button className="whitespace-nowrap flex items-center gap-1 px-4 py-2 rounded-full text-nordic-dark font-medium text-sm hover:bg-black/5 transition-colors">
+          <button
+            onClick={() => setIsFiltersOpen(true)}
+            className="whitespace-nowrap flex items-center gap-1 px-4 py-2 rounded-full text-nordic-dark font-medium text-sm hover:bg-black/5 transition-colors"
+          >
             <SlidersHorizontal className="w-4 h-4" /> Filters
           </button>
         </div>
       </div>
+
+      <FiltersModal
+        isOpen={isFiltersOpen}
+        onClose={() => setIsFiltersOpen(false)}
+      />
     </section>
   );
 }

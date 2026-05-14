@@ -19,11 +19,17 @@ export function FeaturedCollections({ properties }: FeaturedCollectionsProps) {
           View all <ArrowRight className="w-4 h-4 ml-1" />
         </Link>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {properties.map(property => (
-          <FeaturedPropertyCard key={property.id} property={property} />
-        ))}
-      </div>
+      {properties.length > 0 ? (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {properties.map(property => (
+            <FeaturedPropertyCard key={property.id} property={property} />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-12 bg-white rounded-xl shadow-card">
+          <p className="text-nordic-muted text-sm">No featured properties match your current filters.</p>
+        </div>
+      )}
     </section>
   );
 }

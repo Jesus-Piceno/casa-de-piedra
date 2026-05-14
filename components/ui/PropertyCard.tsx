@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { BedDouble, Bath, Square, Heart } from "lucide-react";
+import { BedDouble, Bath, Square, Heart, Home } from "lucide-react";
 import { Property } from "@/app/page";
 
 interface PropertyCardProps {
@@ -42,7 +42,10 @@ export function PropertyCard({ property, className = "", currentPage }: Property
             </h3>
           </div>
           <h4 className="text-nordic-dark font-medium truncate mb-1">{property.title}</h4>
-          <p className="text-nordic-muted text-xs mb-4">{property.location}</p>
+          <p className="text-nordic-muted text-xs mb-1">{property.location}</p>
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-mosque/10 text-mosque text-[10px] font-medium mb-3">
+            <Home className="w-2.5 h-2.5" /> {property.type}
+          </span>
           
           <div className="mt-auto flex items-center justify-between pt-3 border-t border-gray-100">
             <div className="flex items-center gap-1 text-nordic-muted text-xs">

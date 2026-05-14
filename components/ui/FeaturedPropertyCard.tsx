@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin, BedDouble, Bath, Square, Heart } from "lucide-react";
+import { MapPin, BedDouble, Bath, Square, Heart, Home } from "lucide-react";
 import { Property } from "@/app/page";
 
 interface FeaturedPropertyCardProps {
@@ -12,7 +12,7 @@ interface FeaturedPropertyCardProps {
 export function FeaturedPropertyCard({ property }: FeaturedPropertyCardProps) {
   return (
     <Link href={`/properties/${property.slug}`} className="block">
-      <div className="group relative rounded-xl overflow-hidden shadow-soft bg-white cursor-pointer h-full">
+      <div className="group relative rounded-xl overflow-hidden shadow-soft bg-white cursor-pointer h-full flex flex-col">
         <div className="aspect-[4/3] w-full overflow-hidden relative">
           <Image
             alt={property.title}
@@ -34,7 +34,7 @@ export function FeaturedPropertyCard({ property }: FeaturedPropertyCardProps) {
           </button>
           <div className="absolute bottom-0 inset-x-0 h-1/2 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
         </div>
-        <div className="p-6 relative flex flex-col justify-between h-full">
+        <div className="p-6 flex flex-col flex-1">
           <div className="flex justify-between items-start mb-2">
             <div>
               <h3 className="text-xl font-medium text-nordic-dark group-hover:text-mosque transition-colors">
@@ -43,12 +43,15 @@ export function FeaturedPropertyCard({ property }: FeaturedPropertyCardProps) {
               <p className="text-nordic-muted text-sm flex items-center gap-1 mt-1">
                 <MapPin className="w-4 h-4" /> {property.location}
               </p>
+              <span className="inline-flex items-center gap-1 mt-2 px-2.5 py-0.5 rounded-full bg-mosque/10 text-mosque text-xs font-medium">
+                <Home className="w-3 h-3" /> {property.type}
+              </span>
             </div>
             <span className="text-xl font-semibold text-mosque whitespace-nowrap ml-4">
               ${property.price.toLocaleString()}
             </span>
           </div>
-          <div className="flex items-center gap-6 mt-6 pt-6 border-t border-nordic-dark/5">
+          <div className="flex items-center gap-6 mt-auto pt-6 border-t border-nordic-dark/5">
             <div className="flex items-center gap-2 text-nordic-muted text-sm">
               <BedDouble className="w-5 h-5" /> {property.beds} Beds
             </div>

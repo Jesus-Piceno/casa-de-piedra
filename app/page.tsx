@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Navbar } from "@/components/layout/Navbar";
 import { HeroSection } from "@/components/home/HeroSection";
 import { FeaturedCollections } from "@/components/home/FeaturedCollections";
@@ -25,24 +26,48 @@ export interface Property {
 export default async function Home(props: { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> }) {
   const searchParams = await props.searchParams;
   const page = typeof searchParams?.page === 'string' ? parseInt(searchParams.page, 10) : 1;
+  const typeFilter = typeof searchParams?.type === 'string' ? searchParams.type : null;
+  const searchQuery = typeof searchParams?.q === 'string' ? searchParams.q : null;
+  const minPrice = typeof searchParams?.minPrice === 'string' ? parseInt(searchParams.minPrice.replace(/,/g, ''), 10) : null;
+  const maxPrice = typeof searchParams?.maxPrice === 'string' ? parseInt(searchParams.maxPrice.replace(/,/g, ''), 10) : null;
+  const beds = typeof searchParams?.beds === 'string' ? parseInt(searchParams.beds, 10) : null;
+  const baths = typeof searchParams?.baths === 'string' ? parseInt(searchParams.baths, 10) : null;
   const limit = 8;
   const start = (page - 1) * limit;
   const end = start + limit - 1;
 
   // Fetch featured properties
-  const { data: featuredData } = await supabase
+  let featuredQuery = supabase
     .from('properties')
     .select('*')
     .eq('is_featured', true)
     .order('title');
 
+  if (typeFilter) featuredQuery = featuredQuery.eq('type', typeFilter);
+  if (searchQuery) featuredQuery = featuredQuery.or(`title.ilike.%${searchQuery}%,location.ilike.%${searchQuery}%`);
+  if (minPrice !== null && !isNaN(minPrice)) featuredQuery = featuredQuery.gte('price', minPrice);
+  if (maxPrice !== null && !isNaN(maxPrice)) featuredQuery = featuredQuery.lte('price', maxPrice);
+  if (beds !== null && !isNaN(beds)) featuredQuery = featuredQuery.gte('beds', beds);
+  if (baths !== null && !isNaN(baths)) featuredQuery = featuredQuery.gte('baths', baths);
+
+  const { data: featuredData } = await featuredQuery;
+
   // Fetch paginated "new" properties (not featured)
-  const { data: newData, count } = await supabase
+  let newQuery = supabase
     .from('properties')
     .select('*', { count: 'exact' })
     .eq('is_featured', false)
     .order('title')
     .range(start, end);
+
+  if (typeFilter) newQuery = newQuery.eq('type', typeFilter);
+  if (searchQuery) newQuery = newQuery.or(`title.ilike.%${searchQuery}%,location.ilike.%${searchQuery}%`);
+  if (minPrice !== null && !isNaN(minPrice)) newQuery = newQuery.gte('price', minPrice);
+  if (maxPrice !== null && !isNaN(maxPrice)) newQuery = newQuery.lte('price', maxPrice);
+  if (beds !== null && !isNaN(beds)) newQuery = newQuery.gte('beds', beds);
+  if (baths !== null && !isNaN(baths)) newQuery = newQuery.gte('baths', baths);
+
+  const { data: newData, count } = await newQuery;
 
   // Map snake_case to camelCase
   const mapProperty = (p: any): Property => ({
@@ -71,12 +96,20 @@ export default async function Home(props: { searchParams?: Promise<{ [key: strin
       <Navbar />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        <HeroSection />
+        <Suspense fallback={null}>
+          <HeroSection />
+        </Suspense>
         <FeaturedCollections properties={featuredProperties} />
         <NewInMarket 
           properties={newProperties} 
           currentPage={page} 
           totalPages={totalPages} 
+          typeFilter={typeFilter}
+          searchQuery={searchQuery}
+          minPrice={minPrice}
+          maxPrice={maxPrice}
+          beds={beds}
+          baths={baths}
         />
       </main>
     </>

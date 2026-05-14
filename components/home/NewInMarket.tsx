@@ -6,9 +6,15 @@ interface NewInMarketProps {
   properties: Property[];
   currentPage: number;
   totalPages: number;
+  typeFilter?: string | null;
+  searchQuery?: string | null;
+  minPrice?: number | null;
+  maxPrice?: number | null;
+  beds?: number | null;
+  baths?: number | null;
 }
 
-export function NewInMarket({ properties, currentPage, totalPages }: NewInMarketProps) {
+export function NewInMarket({ properties, currentPage, totalPages, typeFilter, searchQuery, minPrice, maxPrice, beds, baths }: NewInMarketProps) {
   return (
     <section>
       <div className="flex items-end justify-between mb-8">
@@ -23,18 +29,32 @@ export function NewInMarket({ properties, currentPage, totalPages }: NewInMarket
         </div>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {properties.map((property, idx) => (
-          <PropertyCard 
-            key={property.id} 
-            property={property} 
-            currentPage={currentPage}
-            className={idx === properties.length - 1 ? "hidden lg:flex" : idx === properties.length - 2 ? "hidden xl:flex" : ""}
-          />
-        ))}
-      </div>
+      {properties.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {properties.map((property) => (
+            <PropertyCard 
+              key={property.id} 
+              property={property} 
+              currentPage={currentPage}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-12 bg-white rounded-xl shadow-card">
+          <p className="text-nordic-muted text-sm">No properties match your current filters. Try adjusting your search.</p>
+        </div>
+      )}
       
-      <Pagination currentPage={currentPage} totalPages={totalPages} />
+      <Pagination 
+        currentPage={currentPage} 
+        totalPages={totalPages} 
+        typeFilter={typeFilter} 
+        searchQuery={searchQuery}
+        minPrice={minPrice}
+        maxPrice={maxPrice}
+        beds={beds}
+        baths={baths}
+      />
     </section>
   );
 }
