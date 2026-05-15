@@ -19,24 +19,26 @@ interface FiltersState {
   amenities: Set<string>;
 }
 
+import { useTranslations } from "next-intl";
+
 const AMENITIES = [
-  { id: "pool", label: "Swimming Pool", icon: "🏊" },
-  { id: "gym", label: "Gym", icon: "🏋️" },
-  { id: "parking", label: "Parking", icon: "🅿️" },
-  { id: "ac", label: "Air Conditioning", icon: "❄️" },
-  { id: "wifi", label: "High-speed Wifi", icon: "📶" },
-  { id: "patio", label: "Patio / Terrace", icon: "🌿" },
+  { id: "pool", key: "pool", icon: "🏊" },
+  { id: "gym", key: "gym", icon: "🏋️" },
+  { id: "parking", key: "parking", icon: "🅿️" },
+  { id: "ac", key: "ac", icon: "❄️" },
+  { id: "wifi", key: "wifi", icon: "📶" },
+  { id: "patio", key: "patio", icon: "🌿" },
 ];
 
 const PROPERTY_TYPES = [
-  "Any Type",
-  "House",
-  "Apartment",
-  "Villa",
-  "Penthouse",
-  "Studio",
-  "Townhouse",
-  "Condo",
+  "all",
+  "house",
+  "apartment",
+  "villa",
+  "penthouse",
+  "studio",
+  "townhouse",
+  "condo",
 ];
 
 const DEFAULT_FILTERS: FiltersState = {
@@ -55,12 +57,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 export function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations('Filters');
 
   const [filters, setFilters] = useState<FiltersState>(() => ({
     location: searchParams.get("q") || "",
     minPrice: searchParams.get("minPrice") || "",
     maxPrice: searchParams.get("maxPrice") || "",
-    propertyType: searchParams.get("type") || "Any Type",
+    propertyType: searchParams.get("type") || "all",
     beds: parseInt(searchParams.get("beds") || "0", 10),
     baths: parseInt(searchParams.get("baths") || "0", 10),
     amenities: new Set<string>(),
@@ -73,7 +76,7 @@ export function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
         location: searchParams.get("q") || "",
         minPrice: searchParams.get("minPrice") || "",
         maxPrice: searchParams.get("maxPrice") || "",
-        propertyType: searchParams.get("type") || "Any Type",
+        propertyType: searchParams.get("type") || "all",
         beds: parseInt(searchParams.get("beds") || "0", 10),
         baths: parseInt(searchParams.get("baths") || "0", 10),
         amenities: new Set<string>(),
@@ -93,7 +96,7 @@ export function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
     if (filters.maxPrice) params.set("maxPrice", filters.maxPrice);
     else params.delete("maxPrice");
 
-    if (filters.propertyType !== "Any Type") params.set("type", filters.propertyType);
+    if (filters.propertyType !== "all") params.set("type", filters.propertyType);
     else params.delete("type");
 
     if (filters.beds > 0) params.set("beds", filters.beds.toString());
@@ -195,7 +198,7 @@ export function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
           {/* ── Header ── */}
           <header className="px-8 py-6 border-b border-nordic-dark/5 flex justify-between items-center bg-white sticky top-0 z-30">
             <h2 className="text-2xl font-semibold tracking-tight text-nordic-dark">
-              Filters
+              {t('filters')}
             </h2>
             <button
               onClick={onClose}
@@ -211,13 +214,13 @@ export function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
             {/* Location */}
             <section>
               <label className="block text-xs font-semibold text-nordic-muted uppercase tracking-wider mb-3">
-                Location
+                {t('location')}
               </label>
               <div className="relative group">
                 <MapPin className="absolute left-4 top-3.5 w-5 h-5 text-nordic-muted group-focus-within:text-mosque transition-colors" />
                 <input
                   className="w-full pl-12 pr-4 py-3 bg-clear-day border-0 rounded-lg text-nordic-dark placeholder-nordic-muted/60 focus:ring-2 focus:ring-mosque focus:bg-white transition-all shadow-sm outline-none"
-                  placeholder="City, neighborhood, or address"
+                  placeholder={t('locationPlaceholder')}
                   type="text"
                   value={filters.location}
                   onChange={(e) =>
@@ -231,7 +234,7 @@ export function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
             <section>
               <div className="flex justify-between items-end mb-4">
                 <label className="block text-xs font-semibold text-nordic-muted uppercase tracking-wider">
-                  Price Range
+                  {t('priceRange')}
                 </label>
                 <span className="text-sm font-medium text-mosque">
                   {formatDisplayPrice(filters.minPrice, filters.maxPrice)}
@@ -263,7 +266,7 @@ export function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-clear-day p-3 rounded-lg border border-transparent focus-within:border-mosque/30 transition-colors">
                   <label className="block text-[10px] text-nordic-muted uppercase font-medium mb-1">
-                    Min Price
+                    {t('minPrice')}
                   </label>
                   <div className="flex items-center">
                     <span className="text-nordic-muted mr-1">$</span>
@@ -280,7 +283,7 @@ export function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
                 </div>
                 <div className="bg-clear-day p-3 rounded-lg border border-transparent focus-within:border-mosque/30 transition-colors">
                   <label className="block text-[10px] text-nordic-muted uppercase font-medium mb-1">
-                    Max Price
+                    {t('maxPrice')}
                   </label>
                   <div className="flex items-center">
                     <span className="text-nordic-muted mr-1">$</span>
@@ -303,7 +306,7 @@ export function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
               {/* Property Type */}
               <div className="space-y-3">
                 <label className="block text-xs font-semibold text-nordic-muted uppercase tracking-wider">
-                  Property Type
+                  {t('propertyType')}
                 </label>
                 <div className="relative">
                   <select
@@ -316,8 +319,8 @@ export function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
                       }))
                     }
                   >
-                    {PROPERTY_TYPES.map((t) => (
-                      <option key={t}>{t}</option>
+                    {PROPERTY_TYPES.map((typeKey) => (
+                      <option key={typeKey} value={typeKey}>{t(typeKey as any)}</option>
                     ))}
                   </select>
                   <ChevronDown className="absolute right-3 top-3.5 w-4 h-4 text-nordic-muted pointer-events-none" />
@@ -329,7 +332,7 @@ export function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
                 {/* Beds */}
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium text-nordic-dark">
-                    Bedrooms
+                    {t('bedrooms')}
                   </span>
                   <div className="flex items-center space-x-3 bg-clear-day rounded-full p-1">
                     <button
@@ -340,7 +343,7 @@ export function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
                       <Minus className="w-4 h-4" />
                     </button>
                     <span className="text-sm font-semibold w-6 text-center">
-                      {filters.beds === 0 ? "Any" : `${filters.beds}+`}
+                      {filters.beds === 0 ? "0" : `${filters.beds}+`}
                     </span>
                     <button
                       onClick={() => increment("beds")}
@@ -354,7 +357,7 @@ export function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
                 {/* Baths */}
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium text-nordic-dark">
-                    Bathrooms
+                    {t('bathrooms')}
                   </span>
                   <div className="flex items-center space-x-3 bg-clear-day rounded-full p-1">
                     <button
@@ -365,7 +368,7 @@ export function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
                       <Minus className="w-4 h-4" />
                     </button>
                     <span className="text-sm font-semibold w-6 text-center">
-                      {filters.baths === 0 ? "Any" : `${filters.baths}+`}
+                      {filters.baths === 0 ? "0" : `${filters.baths}+`}
                     </span>
                     <button
                       onClick={() => increment("baths")}
@@ -381,7 +384,7 @@ export function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
             {/* Amenities */}
             <section>
               <label className="block text-xs font-semibold text-nordic-muted uppercase tracking-wider mb-4">
-                Amenities & Features
+                {t('amenitiesFeatures')}
               </label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {AMENITIES.map((amenity) => {
@@ -397,7 +400,7 @@ export function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
                       }`}
                     >
                       <span className="text-lg">{amenity.icon}</span>
-                      {amenity.label}
+                      {t(amenity.key as any)}
                       {active && (
                         <span className="absolute top-2 right-2 w-2 h-2 bg-mosque rounded-full" />
                       )}
@@ -414,13 +417,13 @@ export function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
               onClick={clearAll}
               className="text-sm font-medium text-nordic-muted hover:text-nordic-dark transition-colors underline decoration-nordic-dark/20 underline-offset-4"
             >
-              Clear all filters
+              {t('clearFilters')}
             </button>
             <button
               onClick={handleApplyFilters}
               className="bg-mosque hover:bg-mosque/90 text-white px-8 py-3 rounded-lg font-medium shadow-lg shadow-mosque/30 transition-all hover:shadow-mosque/40 flex items-center gap-2 active:scale-95"
             >
-              Show Homes
+              {t('showHomes')}
               <ArrowRight className="w-4 h-4" />
             </button>
           </footer>

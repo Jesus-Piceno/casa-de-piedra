@@ -1,8 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Building2, Search, Bell } from "lucide-react";
+import { LanguageSelector } from "@/components/ui/LanguageSelector";
+
+import { useTranslations } from 'next-intl';
 
 export function Navbar() {
+  const t = useTranslations('Navigation');
+
   return (
     <nav className="sticky top-0 z-50 bg-background-light/95 backdrop-blur-md border-b border-nordic-dark/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -15,10 +20,9 @@ export function Navbar() {
           </Link>
 
           <div className="hidden md:flex items-center space-x-8">
-            <Link className="text-mosque font-medium text-sm border-b-2 border-mosque px-1 py-1" href="#">Buy</Link>
-            <Link className="text-nordic-dark/70 hover:text-nordic-dark font-medium text-sm hover:border-b-2 hover:border-nordic-dark/20 px-1 py-1 transition-all" href="#">Rent</Link>
-            <Link className="text-nordic-dark/70 hover:text-nordic-dark font-medium text-sm hover:border-b-2 hover:border-nordic-dark/20 px-1 py-1 transition-all" href="#">Sell</Link>
-            <Link className="text-nordic-dark/70 hover:text-nordic-dark font-medium text-sm hover:border-b-2 hover:border-nordic-dark/20 px-1 py-1 transition-all" href="#">Saved Homes</Link>
+            <Link className="text-nordic-dark/70 hover:text-nordic-dark font-medium text-sm hover:border-b-2 hover:border-nordic-dark/20 px-1 py-1 transition-all" href="#">{t('properties')}</Link>
+            <Link className="text-nordic-dark/70 hover:text-nordic-dark font-medium text-sm hover:border-b-2 hover:border-nordic-dark/20 px-1 py-1 transition-all" href="#">{t('about')}</Link>
+            <Link className="text-nordic-dark/70 hover:text-nordic-dark font-medium text-sm hover:border-b-2 hover:border-nordic-dark/20 px-1 py-1 transition-all" href="#">{t('contact')}</Link>
           </div>
 
           <div className="flex items-center space-x-6">
@@ -29,6 +33,9 @@ export function Navbar() {
               <Bell className="w-6 h-6" />
               <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-background-light"></span>
             </button>
+            <div className="hidden sm:block ml-2 border-l border-nordic-dark/10 pl-4">
+              <LanguageSelector />
+            </div>
             <button className="flex items-center gap-2 pl-2 border-l border-nordic-dark/10 ml-2">
               <div className="w-9 h-9 rounded-full bg-gray-200 overflow-hidden ring-2 ring-transparent hover:ring-mosque transition-all">
                 <Image

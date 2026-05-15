@@ -4,12 +4,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { MapPin, BedDouble, Bath, Square, Heart, Home } from "lucide-react";
 import { Property } from "@/app/page";
+import { useTranslations } from "next-intl";
 
 interface FeaturedPropertyCardProps {
   property: Property;
 }
 
 export function FeaturedPropertyCard({ property }: FeaturedPropertyCardProps) {
+  const t = useTranslations('PropertyDetails');
+  const tHome = useTranslations('Home');
+  const tf = useTranslations('Filters');
+
   return (
     <Link href={`/properties/${property.slug}`} className="block">
       <div className="group relative rounded-xl overflow-hidden shadow-soft bg-white cursor-pointer h-full flex flex-col">
@@ -23,7 +28,7 @@ export function FeaturedPropertyCard({ property }: FeaturedPropertyCardProps) {
           />
           {(property.isExclusive || property.isNewArrival) && (
             <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider text-nordic-dark">
-              {property.isExclusive ? "Exclusive" : "New Arrival"}
+              {property.isExclusive ? t('premium') : t('new')}
             </div>
           )}
           <button 
@@ -44,7 +49,7 @@ export function FeaturedPropertyCard({ property }: FeaturedPropertyCardProps) {
                 <MapPin className="w-4 h-4" /> {property.location}
               </p>
               <span className="inline-flex items-center gap-1 mt-2 px-2.5 py-0.5 rounded-full bg-mosque/10 text-mosque text-xs font-medium">
-                <Home className="w-3 h-3" /> {property.type}
+                <Home className="w-3 h-3" /> {tf(property.type.toLowerCase() as any) || property.type}
               </span>
             </div>
             <span className="text-xl font-semibold text-mosque whitespace-nowrap ml-4">
@@ -53,10 +58,10 @@ export function FeaturedPropertyCard({ property }: FeaturedPropertyCardProps) {
           </div>
           <div className="flex items-center gap-6 mt-auto pt-6 border-t border-nordic-dark/5">
             <div className="flex items-center gap-2 text-nordic-muted text-sm">
-              <BedDouble className="w-5 h-5" /> {property.beds} Beds
+              <BedDouble className="w-5 h-5" /> {property.beds} {tHome('beds')}
             </div>
             <div className="flex items-center gap-2 text-nordic-muted text-sm">
-              <Bath className="w-5 h-5" /> {property.baths} Baths
+              <Bath className="w-5 h-5" /> {property.baths} {tHome('baths')}
             </div>
             <div className="flex items-center gap-2 text-nordic-muted text-sm">
               <Square className="w-5 h-5" /> {property.area} m²
