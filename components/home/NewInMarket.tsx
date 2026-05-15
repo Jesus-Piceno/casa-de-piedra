@@ -13,9 +13,21 @@ interface NewInMarketProps {
   maxPrice?: number | null;
   beds?: number | null;
   baths?: number | null;
+  amenities?: string | null;
 }
 
-export async function NewInMarket({ properties, currentPage, totalPages, typeFilter, searchQuery, minPrice, maxPrice, beds, baths }: NewInMarketProps) {
+export async function NewInMarket({ 
+  properties, 
+  currentPage, 
+  totalPages,
+  typeFilter,
+  searchQuery,
+  minPrice,
+  maxPrice,
+  beds,
+  baths,
+  amenities
+}: NewInMarketProps) {
   const t = await getTranslations('Home');
 
   return (
@@ -57,6 +69,7 @@ export async function NewInMarket({ properties, currentPage, totalPages, typeFil
         maxPrice={maxPrice}
         beds={beds}
         baths={baths}
+        amenities={amenities}
       />
     </section>
   );

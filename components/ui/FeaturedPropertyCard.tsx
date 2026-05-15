@@ -3,8 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { MapPin, BedDouble, Bath, Square, Heart, Home } from "lucide-react";
-import { Property } from "@/app/page";
+import { Property } from "@/app/[locale]/page";
 import { useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
 
 interface FeaturedPropertyCardProps {
   property: Property;
@@ -14,9 +15,13 @@ export function FeaturedPropertyCard({ property }: FeaturedPropertyCardProps) {
   const t = useTranslations('PropertyDetails');
   const tHome = useTranslations('Home');
   const tf = useTranslations('Filters');
+  const searchParams = useSearchParams();
+  const queryString = searchParams.toString();
+  
+  const href = `/properties/${property.slug}${queryString ? `?${queryString}` : ''}`;
 
   return (
-    <Link href={`/properties/${property.slug}`} className="block">
+    <Link href={href} className="block">
       <div className="group relative rounded-xl overflow-hidden shadow-soft bg-white cursor-pointer h-full flex flex-col">
         <div className="aspect-[4/3] w-full overflow-hidden relative">
           <Image

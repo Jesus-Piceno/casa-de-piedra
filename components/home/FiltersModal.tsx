@@ -22,12 +22,16 @@ interface FiltersState {
 import { useTranslations } from "next-intl";
 
 const AMENITIES = [
-  { id: "pool", key: "pool", icon: "🏊" },
-  { id: "gym", key: "gym", icon: "🏋️" },
-  { id: "parking", key: "parking", icon: "🅿️" },
-  { id: "ac", key: "ac", icon: "❄️" },
-  { id: "wifi", key: "wifi", icon: "📶" },
-  { id: "patio", key: "patio", icon: "🌿" },
+  { id: "pool",       key: "pool",       icon: "🏊" },
+  { id: "gym",        key: "gym",        icon: "🏋️" },
+  { id: "parking",    key: "parking",    icon: "🅿️" },
+  { id: "ac",         key: "ac",         icon: "❄️" },
+  { id: "garden",     key: "garden",     icon: "🌿" },
+  { id: "terrace",    key: "terrace",    icon: "🌅" },
+  { id: "fireplace",  key: "fireplace",  icon: "🔥" },
+  { id: "concierge",  key: "concierge",  icon: "🛎️" },
+  { id: "ev_charging",key: "ev_charging",icon: "⚡" },
+  { id: "solar",      key: "solar",      icon: "☀️" },
 ];
 
 const PROPERTY_TYPES = [
@@ -45,7 +49,7 @@ const DEFAULT_FILTERS: FiltersState = {
   location: "",
   minPrice: "",
   maxPrice: "",
-  propertyType: "Any Type",
+  propertyType: "all",
   beds: 0,
   baths: 0,
   amenities: new Set<string>(),
@@ -66,7 +70,7 @@ export function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
     propertyType: searchParams.get("type") || "all",
     beds: parseInt(searchParams.get("beds") || "0", 10),
     baths: parseInt(searchParams.get("baths") || "0", 10),
-    amenities: new Set<string>(),
+    amenities: new Set<string>(searchParams.get("amenities")?.split(",").filter(Boolean) || []),
   }));
 
   // Update internal state if URL changes while modal is closed
@@ -79,7 +83,7 @@ export function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
         propertyType: searchParams.get("type") || "all",
         beds: parseInt(searchParams.get("beds") || "0", 10),
         baths: parseInt(searchParams.get("baths") || "0", 10),
-        amenities: new Set<string>(),
+        amenities: new Set<string>(searchParams.get("amenities")?.split(",").filter(Boolean) || []),
       });
     }
   }, [isOpen, searchParams]);
@@ -104,6 +108,9 @@ export function FiltersModal({ isOpen, onClose }: FiltersModalProps) {
 
     if (filters.baths > 0) params.set("baths", filters.baths.toString());
     else params.delete("baths");
+
+    if (filters.amenities.size > 0) params.set("amenities", Array.from(filters.amenities).join(","));
+    else params.delete("amenities");
 
     // Reset pagination on new filter
     params.delete("page");

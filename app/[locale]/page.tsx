@@ -32,6 +32,9 @@ export default async function Home(props: { searchParams?: Promise<{ [key: strin
   const maxPrice = typeof searchParams?.maxPrice === 'string' ? parseInt(searchParams.maxPrice.replace(/,/g, ''), 10) : null;
   const beds = typeof searchParams?.beds === 'string' ? parseInt(searchParams.beds, 10) : null;
   const baths = typeof searchParams?.baths === 'string' ? parseInt(searchParams.baths, 10) : null;
+  const amenitiesParam = typeof searchParams?.amenities === 'string' ? searchParams.amenities : null;
+  const amenitiesArray = amenitiesParam ? amenitiesParam.split(',') : [];
+  
   const limit = 8;
   const start = (page - 1) * limit;
   const end = start + limit - 1;
@@ -43,12 +46,13 @@ export default async function Home(props: { searchParams?: Promise<{ [key: strin
     .eq('is_featured', true)
     .order('title');
 
-  if (typeFilter) featuredQuery = featuredQuery.eq('type', typeFilter);
+  if (typeFilter) featuredQuery = featuredQuery.ilike('type', typeFilter);
   if (searchQuery) featuredQuery = featuredQuery.or(`title.ilike.%${searchQuery}%,location.ilike.%${searchQuery}%`);
   if (minPrice !== null && !isNaN(minPrice)) featuredQuery = featuredQuery.gte('price', minPrice);
   if (maxPrice !== null && !isNaN(maxPrice)) featuredQuery = featuredQuery.lte('price', maxPrice);
   if (beds !== null && !isNaN(beds)) featuredQuery = featuredQuery.gte('beds', beds);
   if (baths !== null && !isNaN(baths)) featuredQuery = featuredQuery.gte('baths', baths);
+  if (amenitiesArray.length > 0) featuredQuery = featuredQuery.contains('amenities', amenitiesArray);
 
   const { data: featuredData } = await featuredQuery;
 
@@ -60,12 +64,13 @@ export default async function Home(props: { searchParams?: Promise<{ [key: strin
     .order('title')
     .range(start, end);
 
-  if (typeFilter) newQuery = newQuery.eq('type', typeFilter);
+  if (typeFilter) newQuery = newQuery.ilike('type', typeFilter);
   if (searchQuery) newQuery = newQuery.or(`title.ilike.%${searchQuery}%,location.ilike.%${searchQuery}%`);
   if (minPrice !== null && !isNaN(minPrice)) newQuery = newQuery.gte('price', minPrice);
   if (maxPrice !== null && !isNaN(maxPrice)) newQuery = newQuery.lte('price', maxPrice);
   if (beds !== null && !isNaN(beds)) newQuery = newQuery.gte('beds', beds);
   if (baths !== null && !isNaN(baths)) newQuery = newQuery.gte('baths', baths);
+  if (amenitiesArray.length > 0) newQuery = newQuery.contains('amenities', amenitiesArray);
 
   const { data: newData, count } = await newQuery;
 
@@ -110,6 +115,7 @@ export default async function Home(props: { searchParams?: Promise<{ [key: strin
           maxPrice={maxPrice}
           beds={beds}
           baths={baths}
+          amenities={amenitiesParam}
         />
       </main>
     </>
