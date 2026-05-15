@@ -22,8 +22,15 @@ export default async function PropertyDetailsPage(props: {
   const params = await props.params;
   const searchParams = props.searchParams ? await props.searchParams : undefined;
   
-  const fromPage = searchParams?.fromPage as string | undefined;
-  const backUrl = fromPage ? `/?page=${fromPage}` : "/";
+  // Rebuild the back URL preserving ALL active filters from searchParams
+  const backParams = new URLSearchParams();
+  const allowedKeys = ['page', 'q', 'type', 'minPrice', 'maxPrice', 'beds', 'baths', 'amenities'];
+  for (const key of allowedKeys) {
+    const val = searchParams?.[key];
+    if (val && typeof val === 'string') backParams.set(key, val);
+  }
+  const backQuery = backParams.toString();
+  const backUrl = backQuery ? `/?${backQuery}` : "/";
   
   const { data: property, error } = await supabase
     .from("properties")
