@@ -28,7 +28,7 @@
   },
   "Filters": {
     "type": "Type de Propriété",
-    "all": "Tout type",
+    "all": "Tous",
     "house": "Maison",
     "apartment": "Appartement",
     "villa": "Villa",
