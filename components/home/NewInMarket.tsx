@@ -1,5 +1,5 @@
 import { PropertyCard } from "@/components/ui/PropertyCard";
-import { Property } from "@/app/page";
+import { Property } from "@/app/[locale]/page";
 import { Pagination } from "@/components/ui/Pagination";
 import { getTranslations } from "next-intl/server";
 

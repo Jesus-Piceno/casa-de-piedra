@@ -1,5 +1,5 @@
 import { FeaturedPropertyCard } from "@/components/ui/FeaturedPropertyCard";
-import { Property } from "@/app/page";
+import { Property } from "@/app/[locale]/page";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";

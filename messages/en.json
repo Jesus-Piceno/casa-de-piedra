@@ -2,7 +2,9 @@
   "Navigation": {
     "properties": "Properties",
     "about": "About Us",
-    "contact": "Contact"
+    "contact": "Contact",
+    "signIn": "Sign In",
+    "signOut": "Sign Out"
   },
   "Hero": {
     "titlePrefix": "Find your",
@@ -91,5 +93,16 @@
     "mo": "/mo",
     "forSale": "FOR SALE",
     "forRent": "FOR RENT"
+  },
+  "Auth": {
+    "welcome": "Welcome to LuxeEstate",
+    "subtitle": "Unlock exclusive properties worldwide.",
+    "continueGoogle": "Continue with Google",
+    "continueGithub": "Continue with GitHub",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign up",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "helpCenter": "Help Center"
   }
 }

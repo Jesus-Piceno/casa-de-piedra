@@ -2,7 +2,9 @@
   "Navigation": {
     "properties": "Propriétés",
     "about": "À Propos",
-    "contact": "Contact"
+    "contact": "Contact",
+    "signIn": "Se Connecter",
+    "signOut": "Se Déconnecter"
   },
   "Hero": {
     "titlePrefix": "Trouvez votre",
@@ -91,5 +93,16 @@
     "mo": "/mois",
     "forSale": "À VENDRE",
     "forRent": "À LOUER"
+  },
+  "Auth": {
+    "welcome": "Bienvenue chez LuxeEstate",
+    "subtitle": "Découvrez des propriétés exclusives dans le monde entier.",
+    "continueGoogle": "Continuer avec Google",
+    "continueGithub": "Continuer avec GitHub",
+    "noAccount": "Vous n'avez pas de compte?",
+    "signUp": "S'inscrire",
+    "privacyPolicy": "Politique de confidentialité",
+    "termsOfService": "Conditions d'utilisation",
+    "helpCenter": "Centre d'aide"
   }
 }
