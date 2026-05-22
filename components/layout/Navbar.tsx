@@ -9,9 +9,18 @@ export async function Navbar() {
   const t = await getTranslations('Navigation');
   const locale = await getLocale();
 
-  // Create server-side Supabase client to fetch session details
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
+
+  let isAdmin = false;
+  if (user) {
+    const { data: roleData } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .single();
+    isAdmin = roleData?.role === 'admin';
+  }
 
   return (
     <nav className="sticky top-0 z-50 bg-background-light/95 backdrop-blur-md border-b border-nordic-dark/10">
@@ -25,9 +34,14 @@ export async function Navbar() {
           </Link>
 
           <div className="hidden md:flex items-center space-x-8">
-            <Link className="text-nordic-dark/70 hover:text-nordic-dark font-medium text-sm hover:border-b-2 hover:border-nordic-dark/20 px-1 py-1 transition-all" href="#">{t('properties')}</Link>
+            <Link className="text-nordic-dark/70 hover:text-nordic-dark font-medium text-sm hover:border-b-2 hover:border-nordic-dark/20 px-1 py-1 transition-all" href={`/${locale}`}>{t('properties')}</Link>
             <Link className="text-nordic-dark/70 hover:text-nordic-dark font-medium text-sm hover:border-b-2 hover:border-nordic-dark/20 px-1 py-1 transition-all" href="#">{t('about')}</Link>
             <Link className="text-nordic-dark/70 hover:text-nordic-dark font-medium text-sm hover:border-b-2 hover:border-nordic-dark/20 px-1 py-1 transition-all" href="#">{t('contact')}</Link>
+            {isAdmin && (
+              <Link className="text-mosque hover:text-mosque/85 font-semibold text-sm hover:border-b-2 hover:border-mosque/20 px-1 py-1 transition-all" href={`/${locale}/admin`}>
+                {t('adminDashboard')}
+              </Link>
+            )}
           </div>
 
           <div className="flex items-center space-x-6">
@@ -80,10 +94,14 @@ export async function Navbar() {
       {/* Mobile menu (hidden by default as per the html) */}
       <div className="md:hidden border-t border-nordic-dark/5 bg-background-light overflow-hidden h-0 transition-all duration-300">
         <div className="px-4 py-2 space-y-1">
-          <Link className="block px-3 py-2 rounded-md text-base font-medium text-mosque bg-mosque/10" href="#">Buy</Link>
-          <Link className="block px-3 py-2 rounded-md text-base font-medium text-nordic-dark hover:bg-black/5" href="#">Rent</Link>
-          <Link className="block px-3 py-2 rounded-md text-base font-medium text-nordic-dark hover:bg-black/5" href="#">Sell</Link>
-          <Link className="block px-3 py-2 rounded-md text-base font-medium text-nordic-dark hover:bg-black/5" href="#">Saved Homes</Link>
+          <Link className="block px-3 py-2 rounded-md text-base font-medium text-mosque bg-mosque/10" href={`/${locale}`}>{t('properties')}</Link>
+          <Link className="block px-3 py-2 rounded-md text-base font-medium text-nordic-dark hover:bg-black/5" href="#">{t('about')}</Link>
+          <Link className="block px-3 py-2 rounded-md text-base font-medium text-nordic-dark hover:bg-black/5" href="#">{t('contact')}</Link>
+          {isAdmin && (
+            <Link className="block px-3 py-2 rounded-md text-base font-semibold text-mosque bg-mosque/10" href={`/${locale}/admin`}>
+              {t('adminDashboard')}
+            </Link>
+          )}
         </div>
       </div>
     </nav>

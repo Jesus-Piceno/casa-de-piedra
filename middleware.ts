@@ -30,8 +30,31 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  // 3. Refresh session if expired
-  await supabase.auth.getUser();
+  // 3. Refresh session if expired and retrieve authenticated user
+  const { data: { user } } = await supabase.auth.getUser();
+
+  // 4. Validate admin route access
+  const pathname = request.nextUrl.pathname;
+  const segments = pathname.split('/');
+  const locale = ['es', 'en', 'fr'].includes(segments[1]) ? segments[1] : 'es';
+
+  const isAdminRoute = pathname === '/admin' || 
+                       pathname.startsWith('/admin/') || 
+                       ['/es/admin', '/en/admin', '/fr/admin'].some(prefix => pathname === prefix || pathname.startsWith(prefix + '/'));
+
+  if (isAdminRoute) {
+    if (!user) {
+      const loginUrl = new URL(`/${locale}/login`, request.url);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    const { data: isAdmin } = await supabase.rpc('is_admin');
+
+    if (!isAdmin) {
+      const homeUrl = new URL(`/${locale}?error=unauthorized`, request.url);
+      return NextResponse.redirect(homeUrl);
+    }
+  }
 
   return response;
 }
