@@ -190,6 +190,7 @@ export function PropertyFormModal({
           is_new_arrival: data.is_new_arrival || false,
           is_exclusive: data.is_exclusive || false,
           amenities: data.amenities || [],
+          is_active: data.is_active ?? true,
         };
         onSaved(saved, false);
       } else {
@@ -218,6 +219,7 @@ export function PropertyFormModal({
           is_new_arrival: data.is_new_arrival || false,
           is_exclusive: data.is_exclusive || false,
           amenities: data.amenities || [],
+          is_active: data.is_active ?? true,
         };
         onSaved(saved, true);
       }
