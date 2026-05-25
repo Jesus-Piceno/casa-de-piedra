@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin, BedDouble, Bath, Square, Heart, Home } from "lucide-react";
+import { MapPin, BedDouble, Bath, Square, Home } from "lucide-react";
 import { Property } from "@/app/[locale]/page";
 import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
@@ -36,12 +36,6 @@ export function FeaturedPropertyCard({ property }: FeaturedPropertyCardProps) {
               {property.isExclusive ? t('premium') : t('new')}
             </div>
           )}
-          <button 
-            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-nordic-dark hover:bg-mosque hover:text-white transition-all z-10"
-            onClick={(e) => e.preventDefault()}
-          >
-            <Heart className="w-5 h-5" />
-          </button>
           <div className="absolute bottom-0 inset-x-0 h-1/2 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
         </div>
         <div className="p-6 flex flex-col flex-1">

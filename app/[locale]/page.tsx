@@ -27,6 +27,7 @@ export default async function Home(props: { searchParams?: Promise<{ [key: strin
   const searchParams = await props.searchParams;
   const page = typeof searchParams?.page === 'string' ? parseInt(searchParams.page, 10) : 1;
   const typeFilter = typeof searchParams?.type === 'string' ? searchParams.type : null;
+  const statusFilter = typeof searchParams?.status === 'string' ? searchParams.status : null;
   const searchQuery = typeof searchParams?.q === 'string' ? searchParams.q : null;
   const minPrice = typeof searchParams?.minPrice === 'string' ? parseInt(searchParams.minPrice.replace(/,/g, ''), 10) : null;
   const maxPrice = typeof searchParams?.maxPrice === 'string' ? parseInt(searchParams.maxPrice.replace(/,/g, ''), 10) : null;
@@ -47,6 +48,7 @@ export default async function Home(props: { searchParams?: Promise<{ [key: strin
     .order('title');
 
   if (typeFilter) featuredQuery = featuredQuery.ilike('type', typeFilter);
+  if (statusFilter) featuredQuery = featuredQuery.eq('status', statusFilter);
   if (searchQuery) featuredQuery = featuredQuery.or(`title.ilike.%${searchQuery}%,location.ilike.%${searchQuery}%`);
   if (minPrice !== null && !isNaN(minPrice)) featuredQuery = featuredQuery.gte('price', minPrice);
   if (maxPrice !== null && !isNaN(maxPrice)) featuredQuery = featuredQuery.lte('price', maxPrice);
@@ -65,6 +67,7 @@ export default async function Home(props: { searchParams?: Promise<{ [key: strin
     .range(start, end);
 
   if (typeFilter) newQuery = newQuery.ilike('type', typeFilter);
+  if (statusFilter) newQuery = newQuery.eq('status', statusFilter);
   if (searchQuery) newQuery = newQuery.or(`title.ilike.%${searchQuery}%,location.ilike.%${searchQuery}%`);
   if (minPrice !== null && !isNaN(minPrice)) newQuery = newQuery.gte('price', minPrice);
   if (maxPrice !== null && !isNaN(maxPrice)) newQuery = newQuery.lte('price', maxPrice);
@@ -110,6 +113,7 @@ export default async function Home(props: { searchParams?: Promise<{ [key: strin
           currentPage={page} 
           totalPages={totalPages} 
           typeFilter={typeFilter}
+          statusFilter={statusFilter}
           searchQuery={searchQuery}
           minPrice={minPrice}
           maxPrice={maxPrice}

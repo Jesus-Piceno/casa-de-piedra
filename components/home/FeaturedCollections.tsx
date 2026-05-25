@@ -1,7 +1,5 @@
 import { FeaturedPropertyCard } from "@/components/ui/FeaturedPropertyCard";
 import { Property } from "@/app/[locale]/page";
-import { ArrowRight } from "lucide-react";
-import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 interface FeaturedCollectionsProps {
@@ -18,9 +16,6 @@ export async function FeaturedCollections({ properties }: FeaturedCollectionsPro
           <h2 className="text-2xl font-light text-nordic-dark">{t('featuredCollections')}</h2>
           <p className="text-nordic-muted mt-1 text-sm">{t('featuredCollectionsSubtitle')}</p>
         </div>
-        <Link className="hidden sm:flex items-center gap-1 text-sm font-medium text-mosque hover:opacity-70 transition-opacity" href="#">
-          {t('viewAll')} <ArrowRight className="w-4 h-4 ml-1" />
-        </Link>
       </div>
       {properties.length > 0 ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { BedDouble, Bath, Square, Heart, Home } from "lucide-react";
+import { BedDouble, Bath, Square, Home } from "lucide-react";
 import { Property } from "@/app/[locale]/page";
 import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
@@ -34,9 +34,6 @@ export function PropertyCard({ property, className = "", currentPage }: Property
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             unoptimized
           />
-          <button className="absolute top-3 right-3 p-2 bg-white/90 rounded-full hover:bg-mosque hover:text-white transition-colors text-nordic-dark" onClick={(e) => e.preventDefault()}>
-            <Heart className="w-4 h-4" />
-          </button>
           <div className={`absolute bottom-3 left-3 text-white text-xs font-bold px-2 py-1 rounded ${isForSale ? "bg-nordic-dark/90" : "bg-mosque/90"}`}>
             {isForSale ? t('forSale', { fallback: property.status }) : t('forRent', { fallback: property.status })}
           </div>

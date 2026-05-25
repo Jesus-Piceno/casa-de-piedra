@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Building2, Search, Bell, LogIn } from "lucide-react";
+import { Building2, LogIn } from "lucide-react";
 import { LanguageSelector } from "@/components/ui/LanguageSelector";
 import { getTranslations, getLocale } from 'next-intl/server';
 import { createClient } from "@/utils/supabase/server";
@@ -45,14 +45,7 @@ export async function Navbar() {
           </div>
 
           <div className="flex items-center space-x-6">
-            <button className="text-nordic-dark hover:text-mosque transition-colors">
-              <Search className="w-6 h-6" />
-            </button>
-            <button className="text-nordic-dark hover:text-mosque transition-colors relative">
-              <Bell className="w-6 h-6" />
-              <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-background-light"></span>
-            </button>
-            <div className="hidden sm:block ml-2 border-l border-nordic-dark/10 pl-4">
+            <div className="hidden sm:block border-l border-nordic-dark/10 pl-4">
               <LanguageSelector />
             </div>
 

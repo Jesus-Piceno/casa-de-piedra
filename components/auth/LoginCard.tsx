@@ -103,27 +103,6 @@ export function LoginCard() {
           </button>
         </div>
 
-        <p className="mt-8 text-center text-sm text-nordic-muted dark:text-gray-400 relative z-10">
-          {t("noAccount")}{" "}
-          <a className="font-semibold text-mosque dark:text-[#06f9d0] hover:underline transition-colors ml-1" href="#">
-            {t("signUp")}
-          </a>
-        </p>
-      </div>
-
-      {/* Footer Links */}
-      <div className="mt-8 text-center">
-        <nav className="flex justify-center gap-6 text-xs text-nordic-muted/60 dark:text-gray-500">
-          <a className="hover:text-nordic-dark dark:hover:text-gray-300 transition-colors" href="#">
-            {t("privacyPolicy")}
-          </a>
-          <a className="hover:text-nordic-dark dark:hover:text-gray-300 transition-colors" href="#">
-            {t("termsOfService")}
-          </a>
-          <a className="hover:text-nordic-dark dark:hover:text-gray-300 transition-colors" href="#">
-            {t("helpCenter")}
-          </a>
-        </nav>
       </div>
     </div>
   );

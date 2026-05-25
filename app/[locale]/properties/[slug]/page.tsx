@@ -6,9 +6,8 @@ import { supabase } from "@/utils/supabase/client";
 import dynamic from "next/dynamic";
 import { getTranslations } from "next-intl/server";
 import { 
-  MapPin, Star, MessageCircle, Phone, Calendar, Mail, 
-  Grid2X2, Square, BedDouble, Bath, Car, CheckCircle2,
-  ArrowRight, ArrowLeft, Calculator
+  MapPin, Square, BedDouble, Bath, Car, CheckCircle2,
+  ArrowLeft
 } from "lucide-react";
 
 import { MapWrapper } from "@/components/ui/MapWrapper";
@@ -82,10 +81,6 @@ export default async function PropertyDetailsPage(props: {
                   </span>
                 )}
               </div>
-              <button className="absolute bottom-4 right-4 bg-white/90 hover:bg-white text-nordic-dark px-4 py-2 rounded-lg text-sm font-medium shadow-lg backdrop-blur transition-all flex items-center gap-2">
-                <Grid2X2 className="w-4 h-4" />
-                {t('viewAllPhotos')}
-              </button>
             </div>
             
             {/* Galería (Miniaturas) */}
@@ -125,51 +120,11 @@ export default async function PropertyDetailsPage(props: {
                 </div>
                 
                 <div className="h-px bg-slate-100 my-6"></div>
-                
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-14 h-14 relative rounded-full overflow-hidden border-2 border-white shadow-sm">
-                    <Image
-                      alt="Agente Inmobiliario"
-                      src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-nordic-dark">Sarah Jenkins</h3>
-                    <div className="flex items-center gap-1 text-xs text-mosque font-medium">
-                      <Star className="w-3.5 h-3.5 fill-current" />
-                      <span>{t('featuredAgent')}</span>
-                    </div>
-                  </div>
-                  <div className="ml-auto flex gap-2">
-                    <button className="p-2 rounded-full bg-mosque/10 text-mosque hover:bg-mosque hover:text-white transition-colors">
-                      <MessageCircle className="w-4 h-4" />
-                    </button>
-                    <button className="p-2 rounded-full bg-mosque/10 text-mosque hover:bg-mosque hover:text-white transition-colors">
-                      <Phone className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-                
-                <div className="space-y-3">
-                  <button className="w-full bg-mosque hover:bg-primary-hover text-white py-4 px-6 rounded-lg font-medium transition-all shadow-lg shadow-mosque/20 flex items-center justify-center gap-2 group">
-                    <Calendar className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                    {t('scheduleTour')}
-                  </button>
-                  <button className="w-full bg-transparent border border-nordic-dark/10 hover:border-mosque text-nordic-dark/80 hover:text-mosque py-4 px-6 rounded-lg font-medium transition-all flex items-center justify-center gap-2">
-                    <Mail className="w-5 h-5" />
-                    {t('contactAgent')}
-                  </button>
-                </div>
               </div>
 
               <div className="bg-white p-2 rounded-xl shadow-sm border border-mosque/5">
                 <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden bg-slate-100">
                   <MapWrapper locationName={property.location} />
-                  <div className="absolute bottom-2 right-2 z-[1000]">
-                    <a className="bg-white/90 text-xs font-medium px-2 py-1 rounded shadow-sm text-nordic-dark hover:text-mosque" href="#">{t('viewOnMap')}</a>
-                  </div>
                 </div>
               </div>
               
@@ -211,10 +166,6 @@ export default async function PropertyDetailsPage(props: {
             <div className="prose prose-slate max-w-none text-nordic-dark/70 leading-relaxed">
               <p className="mb-4">{property.description || t('fallbackDescription')}</p>
             </div>
-            <button className="mt-4 text-mosque font-semibold text-sm flex items-center gap-1 hover:gap-2 transition-all">
-              {t('readMore')}
-              <ArrowRight className="w-4 h-4" />
-            </button>
           </div>
 
           <div className="bg-white p-8 rounded-xl shadow-sm border border-mosque/5">
@@ -232,24 +183,7 @@ export default async function PropertyDetailsPage(props: {
             </div>
           </div>
 
-          {isForSale && (
-            <div className="bg-mosque/5 p-6 rounded-xl border border-mosque/10 flex flex-col sm:flex-row items-center justify-between gap-6">
-              <div className="flex items-start gap-4">
-                <div className="p-3 bg-white rounded-full text-mosque shadow-sm">
-                  <Calculator className="w-6 h-6" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-nordic-dark">{t('estimatedMonthlyPayment')}</h3>
-                  <p className="text-sm text-nordic-dark/60">
-                    {t('startingAt')} <strong className="text-mosque">${Math.floor(property.price * 0.005).toLocaleString()}{t('mo')}</strong> {t('withDownPayment')}
-                  </p>
-                </div>
-              </div>
-              <button className="whitespace-nowrap px-4 py-2 bg-white border border-nordic-dark/10 rounded-lg text-sm font-semibold hover:border-mosque transition-colors text-nordic-dark">
-                {t('calculateMortgage')}
-              </button>
-            </div>
-          )}
+
         </div>
       </main>
       
