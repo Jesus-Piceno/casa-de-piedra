@@ -175,6 +175,17 @@
     "deleteConfirm": "Are you sure you want to delete this property? This action cannot be undone.",
     "deleteSuccess": "Property deleted successfully",
     "deleteError": "Failed to delete property",
-    "requiredField": "This field is required"
+    "requiredField": "This field is required",
+    "deactivateProperty": "Deactivate property",
+    "activateProperty": "Activate property",
+    "deactivateSuccess": "Property deactivated. It will no longer be visible to the public.",
+    "activateSuccess": "Property activated and now visible to the public.",
+    "toggleActiveError": "Failed to update property visibility",
+    "statusActive": "Active",
+    "statusInactive": "Inactive",
+    "visibility": "Visibility",
+    "filterAll": "All status",
+    "filterActive": "Active only",
+    "filterInactive": "Inactive only"
   }
 }

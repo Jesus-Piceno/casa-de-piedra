@@ -175,6 +175,17 @@
     "deleteConfirm": "¿Estás seguro de que deseas eliminar esta propiedad? Esta acción no se puede deshacer.",
     "deleteSuccess": "Propiedad eliminada con éxito",
     "deleteError": "Error al eliminar la propiedad",
-    "requiredField": "Este campo es obligatorio"
+    "requiredField": "Este campo es obligatorio",
+    "deactivateProperty": "Desactivar propiedad",
+    "activateProperty": "Activar propiedad",
+    "deactivateSuccess": "Propiedad desactivada. Ya no será visible al público.",
+    "activateSuccess": "Propiedad activada y ahora visible al público.",
+    "toggleActiveError": "Error al actualizar la visibilidad de la propiedad",
+    "statusActive": "Activa",
+    "statusInactive": "Inactiva",
+    "visibility": "Visibilidad",
+    "filterAll": "Todos los estados",
+    "filterActive": "Solo activas",
+    "filterInactive": "Solo inactivas"
   }
 }

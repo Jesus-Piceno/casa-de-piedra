@@ -3,7 +3,10 @@ import { Navbar } from "@/components/layout/Navbar";
 import { HeroSection } from "@/components/home/HeroSection";
 import { FeaturedCollections } from "@/components/home/FeaturedCollections";
 import { NewInMarket } from "@/components/home/NewInMarket";
-import { supabase } from "@/utils/supabase/client";
+import { createClient } from "@/utils/supabase/server";
+
+// Force Next.js to always fetch fresh data from DB on every request
+export const dynamic = "force-dynamic";
 
 // Define the Property type according to the DB schema mapping
 export interface Property {
@@ -40,11 +43,16 @@ export default async function Home(props: { searchParams?: Promise<{ [key: strin
   const start = (page - 1) * limit;
   const end = start + limit - 1;
 
+  // Create a fresh server-side client for each request (respects auth cookies)
+  const supabase = await createClient();
+
+
   // Fetch featured properties
   let featuredQuery = supabase
     .from('properties')
     .select('*')
     .eq('is_featured', true)
+    .eq('is_active', true)
     .order('title');
 
   if (typeFilter) featuredQuery = featuredQuery.ilike('type', typeFilter);
@@ -63,6 +71,7 @@ export default async function Home(props: { searchParams?: Promise<{ [key: strin
     .from('properties')
     .select('*', { count: 'exact' })
     .eq('is_featured', false)
+    .eq('is_active', true)
     .order('title')
     .range(start, end);
 

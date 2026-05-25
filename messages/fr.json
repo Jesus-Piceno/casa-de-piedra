@@ -175,6 +175,17 @@
     "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette propriété ? Cette action est irréversible.",
     "deleteSuccess": "Propriété supprimée avec succès",
     "deleteError": "Échec de la suppression de la propriété",
-    "requiredField": "Ce champ est obligatoire"
+    "requiredField": "Ce champ est obligatoire",
+    "deactivateProperty": "Désactiver la propriété",
+    "activateProperty": "Activer la propriété",
+    "deactivateSuccess": "Propriété désactivée. Elle ne sera plus visible par le public.",
+    "activateSuccess": "Propriété activée et maintenant visible par le public.",
+    "toggleActiveError": "Échec de la mise à jour de la visibilité de la propriété",
+    "statusActive": "Active",
+    "statusInactive": "Inactive",
+    "visibility": "Visibilité",
+    "filterAll": "Tous les statuts",
+    "filterActive": "Actives seulement",
+    "filterInactive": "Inactives seulement"
   }
 }

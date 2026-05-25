@@ -18,7 +18,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Plus,
-  Pencil
+  Pencil,
+  PowerOff,
+  Power
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -45,6 +47,8 @@ export function AdminDashboardClient({ initialProperties, initialUsers }: AdminD
   // Search states
   const [propertySearch, setPropertySearch] = useState("");
   const [propertyTypeFilter, setPropertyTypeFilter] = useState("all");
+  const [propertyActiveFilter, setPropertyActiveFilter] = useState("all");
+  const [togglingPropertyId, setTogglingPropertyId] = useState<string | null>(null);
   const [userSearch, setUserSearch] = useState("");
 
   // Pagination states
@@ -121,6 +125,35 @@ export function AdminDashboardClient({ initialProperties, initialUsers }: AdminD
     }
   };
 
+  // Handle toggling property active state
+  const handleToggleActive = async (property: Property) => {
+    const newIsActive = !property.is_active;
+    try {
+      setTogglingPropertyId(property.id);
+      setNotification(null);
+      const { error } = await supabase
+        .from("properties")
+        .update({ is_active: newIsActive })
+        .eq("id", property.id);
+      if (error) throw error;
+      setProperties(prev =>
+        prev.map(p => p.id === property.id ? { ...p, is_active: newIsActive } : p)
+      );
+      setNotification({
+        type: "success",
+        message: newIsActive ? t("activateSuccess") : t("deactivateSuccess"),
+      });
+    } catch (err: any) {
+      console.error("Error toggling property:", err);
+      setNotification({
+        type: "error",
+        message: t("toggleActiveError") + `: ${err.message || ""}`,
+      });
+    } finally {
+      setTogglingPropertyId(null);
+    }
+  };
+
   // Filter properties
   const filteredProperties = useMemo(() => {
     return properties.filter(prop => {
@@ -129,10 +162,15 @@ export function AdminDashboardClient({ initialProperties, initialUsers }: AdminD
         prop.location.toLowerCase().includes(propertySearch.toLowerCase());
       
       const matchesType = propertyTypeFilter === "all" || prop.type.toLowerCase() === propertyTypeFilter.toLowerCase();
+
+      const matchesActive =
+        propertyActiveFilter === "all" ||
+        (propertyActiveFilter === "active" && prop.is_active) ||
+        (propertyActiveFilter === "inactive" && !prop.is_active);
       
-      return matchesSearch && matchesType;
+      return matchesSearch && matchesType && matchesActive;
     });
-  }, [properties, propertySearch, propertyTypeFilter]);
+  }, [properties, propertySearch, propertyTypeFilter, propertyActiveFilter]);
 
   // Paginated properties
   const totalPropertyPages = Math.max(1, Math.ceil(filteredProperties.length / propertyPerPage));
@@ -144,7 +182,7 @@ export function AdminDashboardClient({ initialProperties, initialUsers }: AdminD
   // Reset to page 1 when filters change
   useEffect(() => {
     setPropertyPage(1);
-  }, [propertySearch, propertyTypeFilter, propertyPerPage]);
+  }, [propertySearch, propertyTypeFilter, propertyActiveFilter, propertyPerPage]);
 
   // Filter users
   const filteredUsers = useMemo(() => {
@@ -260,6 +298,17 @@ export function AdminDashboardClient({ initialProperties, initialUsers }: AdminD
                 ))}
               </select>
             </div>
+            <div className="w-full sm:w-44">
+              <select
+                value={propertyActiveFilter}
+                onChange={(e) => setPropertyActiveFilter(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-lg border border-nordic-dark/10 dark:border-mosque/30 bg-white dark:bg-[#1a3833] text-nordic-dark dark:text-white focus:outline-none focus:ring-1 focus:ring-mosque text-sm cursor-pointer transition-all"
+              >
+                <option value="all">{t("filterAll")}</option>
+                <option value="active">{t("filterActive")}</option>
+                <option value="inactive">{t("filterInactive")}</option>
+              </select>
+            </div>
             <button
               onClick={() => { setEditingProperty(null); setShowForm(true); }}
               className="flex items-center gap-2 px-5 py-2.5 bg-mosque hover:bg-mosque/90 text-white text-sm font-semibold rounded-lg shadow-lg shadow-mosque/20 transition-all cursor-pointer whitespace-nowrap"
@@ -274,12 +323,13 @@ export function AdminDashboardClient({ initialProperties, initialUsers }: AdminD
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse" style={{ tableLayout: "fixed", minWidth: "800px" }}>
                 <colgroup>
-                  <col style={{ width: "8%" }} />
-                  <col style={{ width: "27%" }} />
-                  <col style={{ width: "22%" }} />
-                  <col style={{ width: "18%" }} />
+                  <col style={{ width: "7%" }} />
+                  <col style={{ width: "24%" }} />
+                  <col style={{ width: "19%" }} />
                   <col style={{ width: "15%" }} />
+                  <col style={{ width: "14%" }} />
                   <col style={{ width: "10%" }} />
+                  <col style={{ width: "11%" }} />
                 </colgroup>
                 <thead>
                   <tr className="bg-nordic-dark/[0.02] dark:bg-white/[0.02] border-b border-nordic-dark/5 dark:border-mosque/10">
@@ -288,78 +338,122 @@ export function AdminDashboardClient({ initialProperties, initialUsers }: AdminD
                     <th className="px-6 py-4 font-semibold text-xs text-nordic-muted uppercase tracking-wider">{t("type")} & {t("status")}</th>
                     <th className="px-6 py-4 font-semibold text-xs text-nordic-muted uppercase tracking-wider">{t("details")}</th>
                     <th className="px-6 py-4 font-semibold text-xs text-nordic-muted uppercase tracking-wider">{t("price")}</th>
+                    <th className="px-6 py-4 font-semibold text-xs text-nordic-muted uppercase tracking-wider">{t("visibility")}</th>
                     <th className="px-6 py-4 font-semibold text-xs text-nordic-muted uppercase tracking-wider text-right">{t("actions")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-nordic-dark/5 dark:divide-mosque/10">
                   {paginatedProperties.length > 0 ? (
-                    paginatedProperties.map((property) => (
-                      <tr key={property.id} className="hover:bg-nordic-dark/[0.01] dark:hover:bg-white/[0.01] transition-colors">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="w-14 h-10 rounded bg-gray-100 overflow-hidden relative shadow-sm">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              src={property.images[0] || "/images/placeholder.jpg"}
-                              alt={property.title}
-                              className="absolute inset-0 w-full h-full object-cover"
-                            />
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="font-semibold text-nordic-dark dark:text-white max-w-xs truncate">{property.title}</div>
-                          <div className="text-xs text-nordic-muted dark:text-gray-400 max-w-xs truncate">{property.location}</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-hint-green/20 text-mosque border border-mosque/10 mr-1.5">
-                            {property.type}
-                          </span>
-                          <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold uppercase ${
-                            isSale(property.status)
-                              ? "bg-blue-50 text-blue-700 border border-blue-100" 
-                              : "bg-[#D9ECC8] text-mosque border border-mosque/20"
-                          }`}>
-                            {isSale(property.status) ? t("forSale") : t("forRent")}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-nordic-muted dark:text-gray-300">
-                          <div className="flex items-center gap-3">
-                            <span className="flex items-center gap-1">
-                              <Bed className="w-3.5 h-3.5 text-nordic-muted/70" /> {property.beds}
+                    paginatedProperties.map((property) => {
+                      const isToggling = togglingPropertyId === property.id;
+                      return (
+                        <tr
+                          key={property.id}
+                          className={`transition-colors ${
+                            property.is_active
+                              ? "hover:bg-nordic-dark/[0.01] dark:hover:bg-white/[0.01]"
+                              : "bg-gray-50/60 dark:bg-gray-900/40 opacity-60"
+                          }`}
+                        >
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="w-14 h-10 rounded bg-gray-100 overflow-hidden relative shadow-sm">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={property.images[0] || "/images/placeholder.jpg"}
+                                alt={property.title}
+                                className={`absolute inset-0 w-full h-full object-cover ${
+                                  property.is_active ? "" : "grayscale"
+                                }`}
+                              />
+                            </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="font-semibold text-nordic-dark dark:text-white max-w-xs truncate">{property.title}</div>
+                            <div className="text-xs text-nordic-muted dark:text-gray-400 max-w-xs truncate">{property.location}</div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-hint-green/20 text-mosque border border-mosque/10 mr-1.5">
+                              {property.type}
                             </span>
-                            <span className="flex items-center gap-1">
-                              <Bath className="w-3.5 h-3.5 text-nordic-muted/70" /> {property.baths}
+                            <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold uppercase ${
+                              isSale(property.status)
+                                ? "bg-blue-50 text-blue-700 border border-blue-100" 
+                                : "bg-[#D9ECC8] text-mosque border border-mosque/20"
+                            }`}>
+                              {isSale(property.status) ? t("forSale") : t("forRent")}
                             </span>
-                            <span className="flex items-center gap-1">
-                              <Maximize2 className="w-3.5 h-3.5 text-nordic-muted/70" /> {property.area} m²
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap font-bold text-mosque dark:text-[#06f9d0]">
-                          {formatPrice(property.price)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                          <div className="inline-flex items-center gap-1">
-                            <button
-                              onClick={() => { setEditingProperty(property); setShowForm(true); }}
-                              className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-nordic-muted hover:text-mosque hover:bg-nordic-dark/5 transition-all cursor-pointer"
-                              title={t("editProperty")}
-                            >
-                              <Pencil className="w-4 h-4" />
-                            </button>
-                            <Link 
-                              href={`/properties/${property.slug}`}
-                              className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-nordic-muted hover:text-mosque hover:bg-nordic-dark/5 transition-all"
-                              title={t("viewDetail")}
-                            >
-                              <Eye className="w-4 h-4" />
-                            </Link>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-nordic-muted dark:text-gray-300">
+                            <div className="flex items-center gap-3">
+                              <span className="flex items-center gap-1">
+                                <Bed className="w-3.5 h-3.5 text-nordic-muted/70" /> {property.beds}
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <Bath className="w-3.5 h-3.5 text-nordic-muted/70" /> {property.baths}
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <Maximize2 className="w-3.5 h-3.5 text-nordic-muted/70" /> {property.area} m²
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap font-bold text-mosque dark:text-[#06f9d0]">
+                            {formatPrice(property.price)}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            {property.is_active ? (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800">
+                                <Power className="w-3 h-3" />
+                                {t("statusActive")}
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-500 border border-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700">
+                                <PowerOff className="w-3 h-3" />
+                                {t("statusInactive")}
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                            <div className="inline-flex items-center gap-1">
+                              <button
+                                onClick={() => handleToggleActive(property)}
+                                disabled={isToggling}
+                                className={`inline-flex items-center justify-center w-8 h-8 rounded-lg transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
+                                  property.is_active
+                                    ? "text-emerald-600 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                    : "text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                                }`}
+                                title={property.is_active ? t("deactivateProperty") : t("activateProperty")}
+                              >
+                                {isToggling ? (
+                                  <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : property.is_active ? (
+                                  <PowerOff className="w-4 h-4" />
+                                ) : (
+                                  <Power className="w-4 h-4" />
+                                )}
+                              </button>
+                              <button
+                                onClick={() => { setEditingProperty(property); setShowForm(true); }}
+                                className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-nordic-muted hover:text-mosque hover:bg-nordic-dark/5 transition-all cursor-pointer"
+                                title={t("editProperty")}
+                              >
+                                <Pencil className="w-4 h-4" />
+                              </button>
+                              <Link 
+                                href={`/properties/${property.slug}`}
+                                className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-nordic-muted hover:text-mosque hover:bg-nordic-dark/5 transition-all"
+                                title={t("viewDetail")}
+                              >
+                                <Eye className="w-4 h-4" />
+                              </Link>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
                   ) : (
                     <tr>
-                      <td colSpan={6} className="px-6 py-10 text-center text-nordic-muted dark:text-gray-400">
+                      <td colSpan={7} className="px-6 py-10 text-center text-nordic-muted dark:text-gray-400">
                         {t("noProperties")}
                       </td>
                     </tr>

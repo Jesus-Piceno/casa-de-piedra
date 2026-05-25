@@ -18,6 +18,7 @@ export interface Property {
   is_featured: boolean;
   is_new_arrival: boolean;
   is_exclusive: boolean;
+  is_active: boolean;
   amenities: string[];
 }
 
@@ -53,6 +54,7 @@ export default async function AdminPage() {
     is_featured: p.is_featured || false,
     is_new_arrival: p.is_new_arrival || false,
     is_exclusive: p.is_exclusive || false,
+    is_active: p.is_active !== false, // default true if null
     amenities: p.amenities || [],
   }));
 

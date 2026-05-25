@@ -2,8 +2,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Navbar } from "@/components/layout/Navbar";
-import { supabase } from "@/utils/supabase/client";
-import dynamic from "next/dynamic";
+import { createClient } from "@/utils/supabase/server";
 import { getTranslations } from "next-intl/server";
 import { 
   MapPin, Square, BedDouble, Bath, Car, CheckCircle2,
@@ -11,6 +10,8 @@ import {
 } from "lucide-react";
 
 import { MapWrapper } from "@/components/ui/MapWrapper";
+
+export const dynamic = "force-dynamic";
 
 export default async function PropertyDetailsPage(props: { 
   params: Promise<{ slug: string }>;
@@ -31,10 +32,13 @@ export default async function PropertyDetailsPage(props: {
   const backQuery = backParams.toString();
   const backUrl = backQuery ? `/?${backQuery}` : "/";
   
+  const supabase = await createClient();
+
   const { data: property, error } = await supabase
     .from("properties")
     .select("*")
     .eq("slug", params.slug)
+    .eq("is_active", true)
     .single();
 
   if (error || !property) {
