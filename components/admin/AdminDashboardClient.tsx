@@ -16,11 +16,14 @@ import {
   Bath, 
   Maximize2,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Plus,
+  Pencil
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Property, UserWithRole } from "@/app/[locale]/admin/page";
+import { PropertyFormModal } from "./PropertyFormModal";
 
 interface AdminDashboardClientProps {
   initialProperties: Property[];
@@ -32,8 +35,12 @@ export function AdminDashboardClient({ initialProperties, initialUsers }: AdminD
   const supabase = createClient();
 
   const [activeTab, setActiveTab] = useState<"properties" | "users">("properties");
-  const [properties] = useState<Property[]>(initialProperties);
+  const [properties, setProperties] = useState<Property[]>(initialProperties);
   const [users, setUsers] = useState<UserWithRole[]>(initialUsers);
+
+  // Form modal state
+  const [showForm, setShowForm] = useState(false);
+  const [editingProperty, setEditingProperty] = useState<Property | null>(null);
   
   // Search states
   const [propertySearch, setPropertySearch] = useState("");
@@ -253,6 +260,13 @@ export function AdminDashboardClient({ initialProperties, initialUsers }: AdminD
                 ))}
               </select>
             </div>
+            <button
+              onClick={() => { setEditingProperty(null); setShowForm(true); }}
+              className="flex items-center gap-2 px-5 py-2.5 bg-mosque hover:bg-mosque/90 text-white text-sm font-semibold rounded-lg shadow-lg shadow-mosque/20 transition-all cursor-pointer whitespace-nowrap"
+            >
+              <Plus className="w-4 h-4" />
+              {t("addProperty")}
+            </button>
           </div>
 
           {/* Properties Table */}
@@ -283,12 +297,11 @@ export function AdminDashboardClient({ initialProperties, initialUsers }: AdminD
                       <tr key={property.id} className="hover:bg-nordic-dark/[0.01] dark:hover:bg-white/[0.01] transition-colors">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="w-14 h-10 rounded bg-gray-100 overflow-hidden relative shadow-sm">
-                            <Image
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
                               src={property.images[0] || "/images/placeholder.jpg"}
                               alt={property.title}
-                              fill
-                              className="object-cover"
-                              sizes="56px"
+                              className="absolute inset-0 w-full h-full object-cover"
                             />
                           </div>
                         </td>
@@ -325,13 +338,22 @@ export function AdminDashboardClient({ initialProperties, initialUsers }: AdminD
                           {formatPrice(property.price)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                          <Link 
-                            href={`/properties/${property.slug}`}
-                            className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-nordic-muted hover:text-mosque hover:bg-nordic-dark/5 transition-all"
-                            title={t("viewDetail")}
-                          >
-                            <Eye className="w-4 h-4" />
-                          </Link>
+                          <div className="inline-flex items-center gap-1">
+                            <button
+                              onClick={() => { setEditingProperty(property); setShowForm(true); }}
+                              className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-nordic-muted hover:text-mosque hover:bg-nordic-dark/5 transition-all cursor-pointer"
+                              title={t("editProperty")}
+                            >
+                              <Pencil className="w-4 h-4" />
+                            </button>
+                            <Link 
+                              href={`/properties/${property.slug}`}
+                              className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-nordic-muted hover:text-mosque hover:bg-nordic-dark/5 transition-all"
+                              title={t("viewDetail")}
+                            >
+                              <Eye className="w-4 h-4" />
+                            </Link>
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -507,6 +529,30 @@ export function AdminDashboardClient({ initialProperties, initialUsers }: AdminD
             </div>
           </div>
         </div>
+      )}
+
+      {/* Property Form Modal */}
+      {showForm && (
+        <PropertyFormModal
+          property={editingProperty}
+          onClose={() => { setShowForm(false); setEditingProperty(null); }}
+          onSaved={(saved, isNew) => {
+            if (isNew) {
+              setProperties(prev => [...prev, saved]);
+            } else {
+              setProperties(prev => prev.map(p => p.id === saved.id ? saved : p));
+            }
+            setShowForm(false);
+            setEditingProperty(null);
+            setNotification({ type: "success", message: t("saveSuccess") });
+          }}
+          onDeleted={(id) => {
+            setProperties(prev => prev.filter(p => p.id !== id));
+            setShowForm(false);
+            setEditingProperty(null);
+            setNotification({ type: "success", message: t("deleteSuccess") });
+          }}
+        />
       )}
     </div>
   );

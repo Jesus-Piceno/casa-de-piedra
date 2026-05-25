@@ -15,6 +15,10 @@ export interface Property {
   baths: number;
   area: number;
   slug: string;
+  is_featured: boolean;
+  is_new_arrival: boolean;
+  is_exclusive: boolean;
+  amenities: string[];
 }
 
 export interface UserWithRole {
@@ -46,6 +50,10 @@ export default async function AdminPage() {
     baths: p.baths,
     area: p.area,
     slug: p.slug,
+    is_featured: p.is_featured || false,
+    is_new_arrival: p.is_new_arrival || false,
+    is_exclusive: p.is_exclusive || false,
+    amenities: p.amenities || [],
   }));
 
   // Fetch all users with their roles using the secure database RPC

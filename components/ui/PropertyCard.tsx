@@ -29,9 +29,10 @@ export function PropertyCard({ property, className = "", currentPage }: Property
           <Image
             alt={property.title}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-            src={property.images[0]}
+            src={property.images[0] || "/images/placeholder.jpg"}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            unoptimized
           />
           <button className="absolute top-3 right-3 p-2 bg-white/90 rounded-full hover:bg-mosque hover:text-white transition-colors text-nordic-dark" onClick={(e) => e.preventDefault()}>
             <Heart className="w-4 h-4" />
